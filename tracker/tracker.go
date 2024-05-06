@@ -9,6 +9,7 @@ import (
 // the AppUsage in the order that the programs were used.
 type Tracker struct {
 	FocusedApp string
+	Date       time.Time
 	Usage      []*AppUsage
 	key        map[string]int // Maps the AppNames to their Usage index
 	size       int            // Size of the `Usage` array
@@ -30,6 +31,7 @@ func (au AppUsage) GetFocusDuration() string {
 func NewTracker() *Tracker {
 	return &Tracker{
 		Usage: make([]*AppUsage, 0),
+		Date:  time.Now(),
 		key:   make(map[string]int),
 		size:  0,
 	}
