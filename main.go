@@ -20,7 +20,7 @@ func main() {
 func runTracker(a appkit.Application, ad *appkit.ApplicationDelegate) {
 	go handleExitSignal()
 
-	tracker := tracker.NewTracker()
+	tracker := tracker.Init()
 	display := display.NewDisplay()
 
 	var workspace appkit.Workspace = appkit.Workspace_SharedWorkspace()
