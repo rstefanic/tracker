@@ -16,7 +16,7 @@ type Tracker struct {
 
 type AppUsage struct {
 	Name          string
-	focusDuration uint64 // Duration of focus in seconds
+	focusDuration time.Duration
 }
 
 func (au AppUsage) GetFocusDuration() string {
