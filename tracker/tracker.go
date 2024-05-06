@@ -15,17 +15,6 @@ type Tracker struct {
 	size       int            // Size of the `Usage` array
 }
 
-type AppUsage struct {
-	Name          string
-	focusDuration time.Duration
-}
-
-func (au AppUsage) GetFocusDuration() string {
-	var t time.Time
-	dur := time.Duration(au.focusDuration)
-
-	t = t.Add(dur * time.Second)
-	return t.Format(time.TimeOnly)
 }
 
 func NewTracker() *Tracker {
@@ -43,7 +32,7 @@ func (t *Tracker) RecordUsage(app string) {
 	if !ok {
 		au := &AppUsage{
 			Name:          app,
-			focusDuration: 0,
+			FocusDuration: 0,
 		}
 
 		idx = t.size
@@ -53,7 +42,7 @@ func (t *Tracker) RecordUsage(app string) {
 		t.size += 1
 	}
 
-	t.Usage[idx].focusDuration += 1
+	t.Usage[idx].FocusDuration += 1
 
 	if app != t.FocusedApp {
 		t.FocusedApp = app
