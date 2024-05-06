@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -18,10 +19,16 @@ func main() {
 }
 
 func runTracker(a appkit.Application, ad *appkit.ApplicationDelegate) {
-	go handleExitSignal()
-
 	tracker := tracker.Init()
 	display := display.NewDisplay()
+
+	go handleExitSignal(func() {
+		err := tracker.Save()
+		if err != nil {
+			fmt.Println("Saving of tracker failed.")
+			fmt.Println(err)
+		}
+	})
 
 	var workspace appkit.Workspace = appkit.Workspace_SharedWorkspace()
 	var oneSec foundation.TimeInterval = 1.0
@@ -34,9 +41,11 @@ func runTracker(a appkit.Application, ad *appkit.ApplicationDelegate) {
 	})
 }
 
-func handleExitSignal() {
+func handleExitSignal(callback func()) {
 	sig := make(chan os.Signal)
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
+
 	<-sig
+	callback()
 	os.Exit(0)
 }
