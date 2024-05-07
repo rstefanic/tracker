@@ -1,12 +1,14 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"tracker/display"
+	"tracker/launchd"
 	"tracker/tracker"
 
 	"github.com/progrium/macdriver/macos"
@@ -15,6 +17,14 @@ import (
 )
 
 func main() {
+	launchdAgent := flag.Bool("launchd-agent", false, "Add the program as a Launch Agent for the current user.")
+	flag.Parse()
+
+	if *launchdAgent {
+		launchd.AddAgent()
+		os.Exit(0)
+	}
+
 	macos.RunApp(runTracker)
 }
 
