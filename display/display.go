@@ -12,10 +12,10 @@ type Display struct {
 	linesLen   int
 }
 
-func NewDisplay() *Display {
+func NewDisplay(maxNameLen, linesLen int) *Display {
 	return &Display{
-		maxNameLen: 0,
-		linesLen:   0,
+		maxNameLen: maxNameLen,
+		linesLen:   linesLen,
 	}
 }
 

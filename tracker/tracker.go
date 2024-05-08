@@ -125,3 +125,16 @@ func (t *Tracker) RecordUsage(app string) {
 		t.FocusedApp = app
 	}
 }
+
+func (t *Tracker) LongestAppNameLen() int {
+	max := 0
+
+	for _, u := range t.Usage {
+		l := len(u.Name)
+		if l > max {
+			max = l
+		}
+	}
+
+	return max
+}

@@ -30,7 +30,10 @@ func main() {
 
 func runTracker(a appkit.Application, ad *appkit.ApplicationDelegate) {
 	tracker := tracker.Init()
-	display := display.NewDisplay()
+	display := display.NewDisplay(
+		tracker.LongestAppNameLen(),
+		len(tracker.Usage),
+	)
 
 	go handleExitSignal(func() {
 		err := tracker.Save()
