@@ -46,8 +46,14 @@ func runTracker(a appkit.Application, ad *appkit.ApplicationDelegate) {
 
 	foundation.Timer_ScheduledTimerWithTimeIntervalRepeatsBlock(oneSec, repeat, func(_ foundation.Timer) {
 		app := workspace.FrontmostApplication()
-		tracker.RecordUsage(app.LocalizedName())
-		display.PrintUsage(tracker.Usage)
+
+		// Sometimes `app` can be nil, such as when the screen saver
+		// turns on and the user has logged back in. In those cases,
+		// there is no frontmost application.
+		if !app.IsNil() {
+			tracker.RecordUsage(app.LocalizedName())
+			display.PrintUsage(tracker.Usage)
+		}
 	})
 }
 
