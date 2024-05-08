@@ -58,6 +58,11 @@ func runTracker(a appkit.Application, ad *appkit.ApplicationDelegate) {
 			display.PrintUsage(tracker.Usage)
 		}
 	})
+
+	var sixtySecs foundation.TimeInterval = 60.0
+	foundation.Timer_ScheduledTimerWithTimeIntervalRepeatsBlock(sixtySecs, repeat, func(_ foundation.Timer) {
+		tracker.Save()
+	})
 }
 
 func handleExitSignal(callback func()) {
