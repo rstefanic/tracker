@@ -35,13 +35,7 @@ func runTracker(a appkit.Application, ad *appkit.ApplicationDelegate) {
 		len(tracker.Usage),
 	)
 
-	go handleExitSignal(func() {
-		err := tracker.Save()
-		if err != nil {
-			fmt.Println("Saving of tracker failed.")
-			fmt.Println(err)
-		}
-	})
+	go saveOnExitSignal(tracker)
 
 	var workspace appkit.Workspace = appkit.Workspace_SharedWorkspace()
 	var oneSec foundation.TimeInterval = 1.0
@@ -65,11 +59,17 @@ func runTracker(a appkit.Application, ad *appkit.ApplicationDelegate) {
 	})
 }
 
-func handleExitSignal(callback func()) {
-	sig := make(chan os.Signal)
-	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
+func saveOnExitSignal(t *tracker.Tracker) {
+	sigs := make(chan os.Signal)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 
-	<-sig
-	callback()
+	<-sigs
+
+	err := t.Save()
+	if err != nil {
+		fmt.Println("Saving of tracker failed.")
+		fmt.Println(err)
+	}
+
 	os.Exit(0)
 }
