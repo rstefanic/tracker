@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"os"
 	"os/signal"
@@ -17,18 +16,28 @@ import (
 )
 
 func main() {
-	launchdAgent := flag.Bool("launchd-agent", false, "Add the program as a Launch Agent for the current user.")
-	flag.Parse()
-
-	if *launchdAgent {
-		launchd.AddAgent()
+	args := os.Args[1:] // Skip the program name
+	if len(args) == 0 {
+		help()
 		os.Exit(0)
 	}
 
-	macos.RunApp(runTracker)
+	for _, cmd := range args {
+		switch(cmd) {
+		case "launchd":
+			launchd.AddAgent()
+			fmt.Println("Launch Agent installed.")
+			break
+		case "start":
+			macos.RunApp(startTracker)
+			break
+		default:
+			help()
+		}
+	}
 }
 
-func runTracker(a appkit.Application, ad *appkit.ApplicationDelegate) {
+func startTracker(a appkit.Application, ad *appkit.ApplicationDelegate) {
 	tracker := tracker.Init()
 	display := display.NewDisplay(
 		tracker.LongestAppNameLen(),
@@ -72,4 +81,13 @@ func saveOnExitSignal(t *tracker.Tracker) {
 	}
 
 	os.Exit(0)
+}
+
+func help() {
+	fmt.Print(`Usage: tracker [command]
+command:
+	launchd	Add the program as a Launch Agent for the current user.
+	start	Start the tracker.
+	help	Print this usage message.
+`);
 }

@@ -3,7 +3,11 @@
 <plist version='1.0'>
   <dict>
     <key>Label</key><string>com.robertstefanic.tracker</string>
-    <key>Program</key><string>{{.Program}}</string>
+    <key>ProgramArguments</key>
+      <array>
+        <string>{{.Program}}</string>
+        <string>start</string>
+      </array>
     <key>RunAtLoad</key><true/>
   </dict>
 </plist>
