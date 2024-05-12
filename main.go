@@ -8,7 +8,7 @@ import (
 
 	"tracker/display"
 	"tracker/launchd"
-	"tracker/tracker"
+	tr "tracker/tracker"
 
 	"github.com/progrium/macdriver/macos"
 	"github.com/progrium/macdriver/macos/appkit"
@@ -23,7 +23,7 @@ func main() {
 	}
 
 	for _, cmd := range args {
-		switch(cmd) {
+		switch cmd {
 		case "launchd":
 			launchd.AddAgent()
 			fmt.Println("Launch Agent installed.")
@@ -38,7 +38,7 @@ func main() {
 }
 
 func startTracker(a appkit.Application, ad *appkit.ApplicationDelegate) {
-	tracker := tracker.Init()
+	tracker := tr.Init()
 	display := display.NewDisplay(
 		tracker.LongestAppNameLen(),
 		len(tracker.Usage),
@@ -68,7 +68,7 @@ func startTracker(a appkit.Application, ad *appkit.ApplicationDelegate) {
 	})
 }
 
-func saveOnExitSignal(t *tracker.Tracker) {
+func saveOnExitSignal(t *tr.Tracker) {
 	sigs := make(chan os.Signal)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 
@@ -89,5 +89,5 @@ command:
 	launchd	Add the program as a Launch Agent for the current user.
 	start	Start the tracker.
 	help	Print this usage message.
-`);
+`)
 }
