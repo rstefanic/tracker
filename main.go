@@ -66,6 +66,20 @@ func startTracker(a appkit.Application, ad *appkit.ApplicationDelegate) {
 	foundation.Timer_ScheduledTimerWithTimeIntervalRepeatsBlock(sixtySecs, repeat, func(_ foundation.Timer) {
 		tracker.Save()
 	})
+	newTrackerOnDayChange(workspace, tracker)
+}
+
+// Creates a new tracker when the calendar day changes.
+func newTrackerOnDayChange(ws appkit.Workspace, t *tr.Tracker) {
+	appkit.Workspace.NotificationCenter(ws).AddObserverForNameObjectQueueUsingBlock(
+		foundation.CalendarDayChangedNotification,
+		nil,
+		foundation.OperationQueue_MainQueue(),
+		func(notification foundation.Notification) {
+			t.Save()
+			t = tr.Init()
+		},
+	)
 }
 
 func saveOnExitSignal(t *tr.Tracker) {
