@@ -38,8 +38,8 @@ func main() {
 }
 
 func startTracker(a appkit.Application, ad *appkit.ApplicationDelegate) {
-	workspace := appkit.Workspace_SharedWorkspace()
-	tracker := tr.Init()
+	var workspace appkit.Workspace = appkit.Workspace_SharedWorkspace()
+	var tracker *tr.Tracker = tr.Init()
 	display := display.NewDisplay(
 		tracker.LongestAppNameLen(),
 		len(tracker.Usage),
@@ -47,26 +47,26 @@ func startTracker(a appkit.Application, ad *appkit.ApplicationDelegate) {
 
 	go saveOnExitSignal(tracker)
 
-	newTrackerOnDayChange(workspace, tracker)
-	trackUsageEverySecond(workspace, tracker)
-	updateDisplayEverySecond(display, tracker)
-	saveTrackerEveryMinute(tracker)
+	newTrackerOnDayChange(workspace, &tracker)
+	trackUsageEverySecond(workspace, &tracker)
+	updateDisplayEverySecond(display, &tracker)
+	saveTrackerEveryMinute(&tracker)
 }
 
 // Creates a new tracker when the calendar day changes.
-func newTrackerOnDayChange(ws appkit.Workspace, t *tr.Tracker) {
+func newTrackerOnDayChange(ws appkit.Workspace, t **tr.Tracker) {
 	appkit.Workspace.NotificationCenter(ws).AddObserverForNameObjectQueueUsingBlock(
 		foundation.CalendarDayChangedNotification,
 		nil,
 		foundation.OperationQueue_MainQueue(),
 		func(notification foundation.Notification) {
-			t.Save()
-			t = tr.Init()
+			(**t).Save()
+			*t = tr.Init()
 		},
 	)
 }
 
-func trackUsageEverySecond(ws appkit.Workspace, t *tr.Tracker) {
+func trackUsageEverySecond(ws appkit.Workspace, t **tr.Tracker) {
 	var oneSec foundation.TimeInterval = 1.0
 	var repeat bool = true
 	foundation.Timer_ScheduledTimerWithTimeIntervalRepeatsBlock(oneSec, repeat, func(_ foundation.Timer) {
@@ -74,24 +74,24 @@ func trackUsageEverySecond(ws appkit.Workspace, t *tr.Tracker) {
 
 		// `app` can be nil when no app is focused; guard against it
 		if !app.IsNil() {
-			t.RecordUsage(app.LocalizedName())
+			(*t).RecordUsage(app.LocalizedName())
 		}
 	})
 }
 
-func updateDisplayEverySecond(d *display.Display, t *tr.Tracker) {
+func updateDisplayEverySecond(d *display.Display, t **tr.Tracker) {
 	var oneSec foundation.TimeInterval = 1.0
 	var repeat bool = true
 	foundation.Timer_ScheduledTimerWithTimeIntervalRepeatsBlock(oneSec, repeat, func(_ foundation.Timer) {
-		d.PrintUsage(t.Usage)
+		d.PrintUsage((*t).Usage)
 	})
 }
 
-func saveTrackerEveryMinute(t *tr.Tracker) {
+func saveTrackerEveryMinute(t **tr.Tracker) {
 	var sixtySecs foundation.TimeInterval = 60.0
 	var repeat bool = true
 	foundation.Timer_ScheduledTimerWithTimeIntervalRepeatsBlock(sixtySecs, repeat, func(_ foundation.Timer) {
-		t.Save()
+		(**t).Save()
 	})
 }
 
